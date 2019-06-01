@@ -61,7 +61,7 @@ export class AuthenticatedComponent implements OnInit {
     };
 
     this.user = this.cookie.get('jwt');
-    this.http.get("http://localhost:3000/api/userinfo", httpOptions)
+    this.http.get("/api/userinfo", httpOptions)
       .subscribe(data => {
           this.res = data;
           console.log(this.res);
@@ -83,7 +83,7 @@ export class AuthenticatedComponent implements OnInit {
         'Authorization': 'Bearer '+this.cookie.get('jwt')
       })
     };
-    this.http.post("http://localhost:3000/api/rapport", card ,httpOptions)
+    this.http.post("/api/rapport", card ,httpOptions)
       .subscribe(data => {
         this.useless = data;
       });
@@ -105,7 +105,7 @@ export class AuthenticatedComponent implements OnInit {
     this.rapportidObj = {
       "rapportid": rapportid
     };
-    this.http.put("http://localhost:3000/api/delrapport",this.rapportidObj , httpOptions)
+    this.http.put("/api/delrapport",this.rapportidObj , httpOptions)
       .subscribe(data => {
         console.log(data);
         this.useless = data;

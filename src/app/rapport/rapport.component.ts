@@ -62,7 +62,7 @@ export class RapportComponent implements OnInit {
       })
     };
     this.user = this.cookie.get('jwt');
-    this.http.get("http://localhost:3000/api/userinfo", httpOptions)
+    this.http.get("/api/userinfo", httpOptions)
       .subscribe(data => {
           this.res = data;
           console.log(this.res);
@@ -134,7 +134,7 @@ export class RapportComponent implements OnInit {
       "name": this.name,
       "rapportid": rapportid
     };
-    this.http.put('http://localhost:3000/api/rapportvak', this.body, httpOptions)
+    this.http.put('/api/rapportvak', this.body, httpOptions)
       .subscribe(data => {
        for(this.i = 0; this.i < this.split2.length; this.i++) {
          this.array2 = this.split2[this.i];
@@ -144,7 +144,7 @@ export class RapportComponent implements OnInit {
            "rapportid": rapportid,
            "vakname": this.name
          }
-        this.http.put('http://localhost:3000/api/rapportvaktoets', this.body2, httpOptions)
+        this.http.put('/api/rapportvaktoets', this.body2, httpOptions)
        };
      });
   }

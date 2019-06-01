@@ -43,7 +43,7 @@ export class AccountComponent implements OnInit {
     };
 
     this.user = this.cookie.get('jwt');
-    this.http.get("http://localhost:3000/api/userinfo", httpOptions)
+    this.http.get("/api/userinfo", httpOptions)
       .subscribe(data => {
           this.res = data;
           console.log(this.res);
