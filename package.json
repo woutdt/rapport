@@ -17,7 +17,6 @@
   "private": true,
   "dependencies": {
     "@angular/animations": "~8.0.0",
-    "@angular/cli": "~7.3.5",
     "@angular/common": "~8.0.0",
     "@angular/compiler": "~8.0.0",
     "@angular/compiler-cli": "~7.2.0",
@@ -38,11 +37,12 @@
     "express": "^4.16.3",
     "firebase-admin": "^8.0.0",
     "jsonwebtoken": "^8.4.0",
-    "mongoose": "^5.0.17"
+    "mongoose": "^5.0.17",
+    "@angular/cli": "^8.0.1"
   },
   "devDependencies": {
-    "@angular-devkit/build-angular": "~0.13.0",
-    "@angular/cli": "~7.3.5",
+    "@angular-devkit/build-angular": "^0.13.9",
+    "@angular/cli": "^8.0.1",
     "@angular/compiler-cli": "~7.2.0",
     "@angular/language-service": "~8.0.0",
     "@types/jasmine": "~2.8.8",
