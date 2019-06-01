@@ -40,7 +40,7 @@ export class NavigationComponent implements OnInit {
         'Authorization': 'Bearer '+this.cookie.get('jwt')
       })
     };
-
+    
     this.user = this.cookie.get('jwt');
     this.http.get("/api/userinfo", httpOptions)
       .subscribe(data => {
