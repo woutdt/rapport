@@ -8,6 +8,8 @@ var jwt = require("jsonwebtoken");
 var ObjectId = require('mongodb').ObjectID;
 var cors = require('cors');
 var cookieParser = require('cookie-parser')
+var ObjectId = require('mongoose').Types.ObjectId;
+var admin = require('firebase-admin');
 
 var User = require("./models/punten.js");
 
@@ -69,7 +71,6 @@ app.post("/api/newUser", function(req, res) {
 });
 
 app.get("/api/authenticate", function(req, res){
-  console.log(req.cookies);
   var email = req.headers.email;
   var password = req.headers.toegang;
   User.findOne({'email': email}, function(err, data) {
@@ -78,7 +79,7 @@ app.get("/api/authenticate", function(req, res){
         return res.status(403).json({"message": "password incorrect"});
       } else {
         payload = {data};
-        jwt.sign(payload, 'value', { expiresIn: '24h' }, function(err, token) {
+        jwt.sign(payload, 'value', { expiresIn: '4000h' }, function(err, token) {
           res.json(token);
         });
       };
@@ -113,11 +114,12 @@ app.get("/api/rapportbyid", function(req, res, next) {
   });
 });
 app.post("/api/rapport", function(req, res, next) {
-  jwt.verify(req.body.token, 'value', function(err, resutl) {
+  var header = req.headers.authorization;
+  headerArray = header.split(" ");
+  jwt.verify(headerArray[1], 'value', function(err, resutl) {
     if(err) return console.log(err);
     data = resutl.data;
     rapportObj = {
-      totaal: req.body.totaal,
       periode: req.body.periode,
       datum: Date.now()
     };
@@ -127,16 +129,29 @@ app.post("/api/rapport", function(req, res, next) {
     });
   });
 });
+app.put("/api/delrapport", function(req, res) {
+  var header = req.headers.authorization;
+  headerArray = header.split(" ");
+  jwt.verify(headerArray[1], 'value', function(err, result) {
+    if(err) return console.log(err);
+    data = result.data;
+    User.findOneAndUpdate({_id: data._id}, { $pull  :  { 'rapporten' : { _id: new ObjectId(req.body.rapportid) }}}, function(err) {
+      if(err) return console.log(err);
+      User.findById(data._id, function(err, doc) {
+        if(err) return console.log(err);
+        res.json(doc);
+      });
+    });
+  });
+});
 app.put("/api/rapportvak", function(req, res, next) {
-  if(req.body.token == undefined || null) {
-    return res.status(403).json({"message": "not authenticated..."});
-  }
-  jwt.verify(req.body.token, 'value', function(err, result) {
+  var header = req.headers.authorization;
+  headerArray = header.split(" ");
+  jwt.verify(headerArray[1], 'value', function(err, result) {
     if(err) return res.json({"message": "error"});
     vakObject = {
       naam: req.body.name,
-      lesuren: Number(req.body.lesuren),
-      totaal: Number(req.body.totaal),
+      lesuren: Number(req.body.lesuren)
     };
     User.update({'rapporten._id': req.body.rapportid}, { $push: { 'rapporten.$.vakken': vakObject }},  function(err, data) {
       if(err) return res.json({"message": "something went wrogn.. please report this"});
