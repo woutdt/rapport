@@ -10,8 +10,12 @@ var cors = require('cors');
 var cookieParser = require('cookie-parser')
 var ObjectId = require('mongoose').Types.ObjectId;
 var admin = require('firebase-admin');
+const path = require('path');
+
 
 var User = require("./models/punten.js");
+
+app.use(express.static(__dirname + '/client/dist/client'));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
