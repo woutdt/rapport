@@ -55,7 +55,7 @@ export class SigninComponent implements OnInit {
       return alert("vergeet je email / wachtwoord niet in te vullen");
     };
     if(f.valid == true) {
-      this.http.get("http://localhost:3000/api/authenticate", httpOptions)
+      this.http.get("/api/authenticate", httpOptions)
           .subscribe(data => {
             this.res = data; 
             this.now = Date.now();
