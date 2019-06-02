@@ -168,10 +168,9 @@ app.put("/api/rapportvak", function(req, res, next) {
   });
 });
 app.put("/api/rapportvaktoets", function(req, res ,next) {
-  if(req.body.token == undefined) {
-    return res.status(403).json({"message": "forbidden"});
-  }
-    jwt.verify(req.body.token, 'value', function(err, result) {
+  var header = req.headers.authorization;
+  headerArray = header.split(" ");
+    jwt.verify(headerArray[1], 'value', function(err, result) {
       if(err) return res.json({"message": "error"});
       var procent = Math.floor((req.body.score / req.body.max) * 100);
       toetsObject = {

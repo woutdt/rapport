@@ -37,6 +37,8 @@ export class RapportComponent implements OnInit {
   body;
   body2;
   array2;
+  nieuwVakId;
+  dits;
 
 
   constructor(
@@ -128,6 +130,15 @@ export class RapportComponent implements OnInit {
     for(this.i = 0; this.i < this.split1.length; this.i++) {
       this.split2.push(this.split1[this.i].split("/"));
     }
+    this.nieuwVakId = [];
+    this.http.get("/api/userinfo", httpOptions)
+      .subscribe(data => {
+        this.rapportid = this.cookie.get('rapport');
+        this.rapportelement = this.arrayCheck(this.rapportid);
+        for(this.i = 0; this.i < this.rapportelement.vakken.length; this.i++) {
+          this.nieuwVakId.push[this.rapportelement.vakken[this.i]._id];
+        };
+      });
     console.log(this.split2);
     this.body = {
       "lesuren": this.lesuren,
@@ -136,15 +147,25 @@ export class RapportComponent implements OnInit {
     };
     this.http.put('/api/rapportvak', this.body, httpOptions)
       .subscribe(data => {
+        this.http.get("/api/userinfo", httpOptions)
+        .subscribe(data => {
+          this.rapportid = this.cookie.get('rapport');
+          this.rapportelement = this.arrayCheck(this.rapportid);
+          for(this.i = 0; this.i < this.rapportelement.vakken.length; this.i++) {
+            if(this.nieuwVakId.indexOf(this.rapportelement.vakken[this.i]._id) < 0) {
+              this.dits = this.rapportelement.vakken[this.i]._id;
+            };
+          };
+        });
        for(this.i = 0; this.i < this.split2.length; this.i++) {
          this.array2 = this.split2[this.i];
          this.body2 = {
            "score": this.array2[0],
            "maxscore": this.array2[1],
            "rapportid": rapportid,
-           "vakname": this.name
+           "vakid": this.dits
          }
-        this.http.put('/api/rapportvaktoets', this.body2, httpOptions)
+         this.http.put('/api/rapportvaktoets', this.body2, httpOptions)
        };
      });
   }
