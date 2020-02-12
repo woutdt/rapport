@@ -3,7 +3,7 @@ var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
 var port = 3000;
 var app = express();
-var bcrypt = require('bcrypt');
+var bcrypt = require('bcryptjs');
 var jwt = require("jsonwebtoken");
 var ObjectId = require('mongodb').ObjectID;
 var cors = require('cors');
@@ -134,6 +134,13 @@ app.post("/api/rapport", function(req, res, next) {
     });
   });
 });
+app.put("/api/rapportTotaal", function(req, res) {
+  var rapportid = req.body.rapportid;
+  User.update({'rapporten._id': rapportid}, { 'rapporten.$.totaal': req.body.nieuwtotaal}, function(err) {
+    if(err) return res.json({"message": "something went wrogn, please contact me"});
+    res.json({"message": "success"})
+  });
+});
 app.put("/api/delrapport", function(req, res) {
   var header = req.headers.authorization;
   headerArray = header.split(" ");
@@ -162,7 +169,15 @@ app.put("/api/rapportvak", function(req, res, next) {
       if(err) return res.json({"message": "something went wrogn.. please report this"});
       User.find({"_id": result.data._id}, function(err, doc) {
         if(err) return res.json({"message": "error"});
-        res.json(doc);
+        usedRapport = doc[0].rapporten.filter(function(rapport) {
+          return rapport._id == req.body.rapportid;
+        });
+        console.log(usedRapport[0]._id)
+        vakken = usedRapport[0].vakken
+        lengte = vakken.length;
+        vakid = usedRapport[0].vakken[lengte - 1]
+        console.log(vakid._id)
+        res.json(vakid._id);
       });
     });
   });
@@ -172,14 +187,16 @@ app.put("/api/rapportvaktoets", function(req, res ,next) {
   headerArray = header.split(" ");
     jwt.verify(headerArray[1], 'value', function(err, result) {
       if(err) return res.json({"message": "error"});
-      var procent = Math.floor((req.body.score / req.body.max) * 100);
+      console.log(req.body)
+      var procent = Math.floor((req.body.score / req.body.maxscore) * 100);
       toetsObject = {
         score: Number(req.body.score),
-        maxscore: Number(req.body.max),
+        maxscore: Number(req.body.maxscore),
         procent: procent
       };
-      User.update({"rapporten.vakken._id": req.body.vakid}, { $push: { 'rapporten.$[a].vakken.$.toetsen': toetsObject }}, { arrayFilters: [{ "a._id": ObjectId(req.body.rapportid) }]}, function(err, data) {
+      User.update({"rapporten.vakken._id": ObjectId(req.body.vakid)}, { $push: { 'rapporten.$[a].vakken.$[b].toetsen': toetsObject }}, { arrayFilters: [{ "a._id": ObjectId(req.body.rapportid) }, { "b._id": ObjectId(req.body.vakid)}]}, function(err, data) {
         if(err) return res.json({"message": "error"});
+        if(err) console.log("error while updating toets");
         User.findOne({"rapporten.vakken._id": req.body.vakid}, function(err, doc) {
           if(err) return res.json({"message": "error"});
           res.json(doc);
