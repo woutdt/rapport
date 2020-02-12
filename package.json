@@ -33,7 +33,7 @@
     "express": "^4.16.3",
     "firebase-admin": "^8.0.0",
     "jsonwebtoken": "^8.4.0",
-    "mongoose": "^5.0.17",
+    "mongoose": "^5.7.5",
     "ngx-cookie-service": "^2.1.0",
     "node": "^12.3.1",
     "path": "^0.12.7",
